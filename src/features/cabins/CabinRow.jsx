@@ -1,8 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
-import { deleteCabins } from "../../services/apiCabins";
-import { formatCurrency } from '../../utils/helpers'
-import toast from "react-hot-toast";
+import { formatCurrency } from "../../utils/helpers";
+import { useState } from "react";
+import CreateCabinForm from "./CreateCabinForm";
+import { useDeleteCabin } from "./useDeleteCabin";
+import { HiDocumentDuplicate, HiPencil, HiTrash } from "react-icons/hi";
+import { useCabins } from "./useCabins";
 
 const TableRow = styled.div`
   display: grid;
@@ -44,35 +46,57 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }) {
-  
-  const {id:cabinId, name, maxCapacity, regularPrice, discount, image } = cabin;
-  
-  const queryClient = useQueryClient();
+  const [showFrom, setShowForm] = useState(false);
+  const { isDeleting, deleteCabin } = useDeleteCabin();
+  const {isCreating, createCabin } = useCabins()
+  const {
+    id: cabinId,
+    name,
+    maxCapacity,
+    regularPrice,
+    discount,
+    image,
+    description
+  } = cabin;
 
-  const { isLoading:isDeleting, mutate } = useMutation({
-    mutationFn: (id) => deleteCabins(id),
-    onSuccess: () => {
-      toast.success('Cabin successfully deleted')
-      queryClient.invalidateQueries({
-        queryKey:['cabins']
-      })
-    },
-    onError:(err)=>toast.error(err.message)
-  })
+  function handleDuplicate() {
+    createCabin({
+      name: `Copy of ${name}`,
+      maxCapacity,
+      regularPrice,
+      discount,
+      image,
+      description,
+    });
+  }
 
   return (
-    <TableRow>
-      <Img src={image} />
-      <Cabin>{name}</Cabin>
-      <div>Fits up to {maxCapacity} guests</div>
-      <Price>{formatCurrency(regularPrice)}</Price>
-      <Discount>{formatCurrency(discount)}</Discount>
-      <button onClick={() => mutate(cabinId)} disabled={isDeleting}>
-        Delete
-      </button>
-    </TableRow>
+    <>
+      <TableRow>
+        <Img src={image} />
+        <Cabin>{name}</Cabin>
+        <div>Fits up to {maxCapacity} guests</div>
+        <Price>{formatCurrency(regularPrice)}</Price>
+        {discount ? (
+          <Discount>{formatCurrency(discount)}</Discount>
+        ) : (
+          <span>&mdash;</span>
+        )}
+        <div>
+          <button disabled={isCreating} onClick={handleDuplicate}>
+            <HiDocumentDuplicate />
+          </button>
+          <button onClick={() => setShowForm((show) => !show)}>
+            <HiPencil />
+          </button>
+          <button onClick={() => deleteCabin(cabinId)} disabled={isDeleting}>
+            <HiTrash />
+          </button>
+        </div>
+      </TableRow>
+      {showFrom && <CreateCabinForm cabinToEdit={cabin} />}
+    </>
   );
-
 }
 
-export default CabinRow
+export default CabinRow;
