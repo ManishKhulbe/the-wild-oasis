@@ -12,7 +12,7 @@ import FormRow from "../../ui/FormRow";
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
 
-function CreateCabinForm({ cabinToEdit = {} }) {
+function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { id: editId, ...editValue } = cabinToEdit;
   const isEditSession = Boolean(editId);
 
@@ -33,7 +33,10 @@ function CreateCabinForm({ cabinToEdit = {} }) {
         { newCabinData: { ...data }, id: editId },
         {
           //create cabin is a mutation func so we have access of onSuccess here too
-          onSuccess: (data) => reset(), // react query also return newly created data here
+          onSuccess: (data) => {
+            reset();
+            onCloseModal?.();
+          }, // react query also return newly created data here
         }
       );
     else
@@ -41,7 +44,10 @@ function CreateCabinForm({ cabinToEdit = {} }) {
         { ...data, image: image },
         {
           //create cabin is a mutation func so we have access of onSuccess here too
-          onSuccess: (data) => reset(), // react query also return newly created data here
+          onSuccess: (data) => {
+            reset();
+            onCloseModal?.();
+          }, // react query also return newly created data here
         }
       );
   }
@@ -51,7 +57,10 @@ function CreateCabinForm({ cabinToEdit = {} }) {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -135,7 +144,12 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
+          {/* //conditionally called function */}
           Cancel
         </Button>
         <Button disable={+isWorking}>
