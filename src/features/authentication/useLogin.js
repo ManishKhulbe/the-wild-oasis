@@ -9,7 +9,7 @@ const navigate = useNavigate()
     const { mutate: login, isLoading } = useMutation({
         mutationFn: ({ email, password }) => loginApi({ email, password }),
         onSuccess: (user) => {
-            queryClient.setQueryData(['user'], user.user) //manually add user data to react query cache because we dont want to refetch when navigate to dashboard because of protected route
+            queryClient.setQueryData(['user'], user.user) //manually add user data to react query cache because we don't want to refetch when navigate to dashboard because of protected route
             navigate("/dashboard", { replace: true });
         },
         onError: (err) => {
