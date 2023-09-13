@@ -10,7 +10,7 @@ export function useUpdateUser() {
       updateCurrentUser({ fullName, avatar }),
     onSuccess: ({user}) => {
         toast.success("User account Edited successfully!");
-        // queryClient.setQueryData('user', user) to manually set data in react query
+        // queryClient.setQueryData(['user'], user) to manually set data in react query
       queryClient.invalidateQueries({
         queryKey: ["user"],
       });
