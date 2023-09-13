@@ -10,7 +10,7 @@ const navigate = useNavigate()
         mutationFn: ({ email, password }) => loginApi({ email, password }),
         onSuccess: (user) => {
             queryClient.setQueriesData(['user'], user) //manually add user data to react query cache because we dont want to refetch when navigate to dashboard because of protected route
-            navigate('/dashboard')
+            navigate("/dashboard", { replace: true });
         },
         onError: (err) => {
             toast.error('Provided email and password are incorrect')
