@@ -1,26 +1,36 @@
-import { useContext } from 'react'
-import { createContext } from 'react'
-import useLocalStorageState from '../hooks/useLocalStorageState'
+import { createContext, useContext, useEffect } from "react";
 
-const DarkModeContext = createContext()
+import { useLocalStorageState } from "../hooks/useLocalStorageState";
+
+const DarkModeContext = createContext();
 
 function DarkModeProvider({ children }) {
-    const [isDarkMode, setIsDarkMode] = useLocalStorageState(false, 'isDarkMode')
-    
-    function toggleDarkMode() {
-        setIsDarkMode((isDark)=>!isDark)
+  const [isDarkMode, setIsDarkMode] = useLocalStorageState(false, "isDarkMode");
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark-mode");
+      document.documentElement.classList.remove("light-mode");
+    } else {
+      document.documentElement.classList.add("light-mode");
+      document.documentElement.classList.remove("dark-mode");
     }
-    return (
-      <DarkModeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
-        {children}
-      </DarkModeContext.Provider>
-    );
+  }, [isDarkMode]);
+
+  function toggleDarkMode() {
+    setIsDarkMode((isDark) => !isDark);
+  }
+  return (
+    <DarkModeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
+      {children}
+    </DarkModeContext.Provider>
+  );
 }
 
 function useDarkMode() {
-    const context = useContext(DarkModeContext)
-    if (context === undefined) throw new Error('Dark Mode Context was used outside of darkModeProvider')
-    return context
+  const context = useContext(DarkModeContext);
+  if (context === undefined) throw new Error("Dark Mode Context was used outside of darkModeProvider");
+  return context;
 }
 
-export { DarkModeProvider, useDarkMode }
+export { DarkModeProvider, useDarkMode };
