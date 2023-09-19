@@ -23,7 +23,7 @@ import { useCabins } from "./useCabins";
 // `;
 
 function CabinTable() {
-  const { isLoading, cabins, error } = useCabins();
+  const { isLoading, cabins } = useCabins();
   const [searchParams] = useSearchParams();
   if (isLoading) return <Spinner />;
 

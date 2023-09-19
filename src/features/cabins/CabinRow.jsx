@@ -92,6 +92,7 @@ function CabinRow({ cabin }) {
                 <Menus.Button
                   icon={<HiDocumentDuplicate />}
                   onClick={handleDuplicate}
+                  disabled={isCreating}
                 >
                   Duplicate
                 </Menus.Button>
@@ -103,9 +104,7 @@ function CabinRow({ cabin }) {
                 <Modal.Open opens="delete">
                   <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
                 </Modal.Open>
-                
               </Menus.List>
-
 
               <Modal.Window name="edit">
                 <CreateCabinForm cabinToEdit={cabin} />
@@ -118,8 +117,6 @@ function CabinRow({ cabin }) {
                   onConfirm={() => deleteCabin(cabinId)}
                 />
               </Modal.Window>
-
-
             </Menus.Menu>
           </Modal>
         </div>
